@@ -1,6 +1,6 @@
 package com.epam.training.torpedo.domain;
 
-public class Position implements Cloneable {
+public class Position {
 
 	private int x;
 	private int y;

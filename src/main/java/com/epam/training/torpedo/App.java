@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.epam.training.filereader.ShipFileReader;
-import com.epam.training.random.PositionGenerator;
+import com.epam.training.position.PositionGenerator;
 import com.epam.training.torpedo.ai.EasyShooter;
 import com.epam.training.torpedo.domain.GameController;
 import com.epam.training.torpedo.domain.GameTable;
@@ -45,7 +45,7 @@ public class App {
 		
 		System.out.println( gameTable );
 
-		//gameController.keepShootingTillAllShipsGoDown();
+		gameController.keepShootingTillAllShipsGoDown();
 
 	}
 }

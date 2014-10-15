@@ -1,13 +1,12 @@
 package com.epam.training.torpedo.domain;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 
-import com.epam.training.random.RandomPositionable;
+import com.epam.training.position.Positionable;
 import com.epam.training.torpedo.parser.ShipParser;
 
 public class GameTable {
@@ -18,7 +17,7 @@ public class GameTable {
 
 	private Map<Position, Ship> gameTable;
 	private ShipParser shipparser;
-	private RandomPositionable randomPositionGenerator;
+	private Positionable randomPositionGenerator;
 
 	public GameTable() {
 		gameTable = new HashMap<>();
@@ -33,7 +32,7 @@ public class GameTable {
 		this.shipparser = shipparser;
 	}
 
-	public void setRandomPositionGenerator(RandomPositionable randomPositionGenerator) {
+	public void setRandomPositionGenerator(Positionable randomPositionGenerator) {
 		this.randomPositionGenerator = randomPositionGenerator;
 	}
 
@@ -46,32 +45,17 @@ public class GameTable {
 		List<Position> parsedShipPositions = shipparser.parse(ship);
 
 		List<Position> actualPositions = getRandomPosition(parsedShipPositions);
-
+		
+		System.out.println( actualPositions + " " + ship );
+		
 		addShipToTable(actualPositions, ship);
 	}
 
 	private List<Position> getRandomPosition(List<Position> original) {
 
-		List<Position> clonedPositionList = new ArrayList<>();
+		List<Position> shiftedPositions = randomPositionGenerator.getRandomPositions(original);
 
-		do {
-
-			Position randomPosition = randomPositionGenerator.getRandomPosition();
-
-			clonedPositionList.clear();
-
-			for (Position originalPosition : original) {
-
-				Position clonedPosition = new Position(originalPosition);
-
-				clonedPosition.addPosition(randomPosition);
-
-				clonedPositionList.add(clonedPosition);
-			}
-
-		} while (!checkShipCoordinates(clonedPositionList));
-
-		return clonedPositionList;
+		return shiftedPositions;
 	}
 
 	private void validateRandomPositionGeneratorIsNotNull() {
@@ -84,41 +68,6 @@ public class GameTable {
 		for (Ship ship : shipList) {
 			addShip(ship);
 		}
-	}
-
-	private boolean checkShipCoordinates(List<Position> shipPositions) {
-
-		boolean coordinatesAreFree = checkShipCoordinatesAreFree(shipPositions);
-
-		boolean coordinatesAreOnTheTable = checkShipCoordinatesAreNotGreaterTheTable(shipPositions);
-
-		return coordinatesAreFree && coordinatesAreOnTheTable;
-	}
-
-	private boolean checkShipCoordinatesAreFree(List<Position> shipPositions) {
-
-		for (Position position : shipPositions) {
-			if (gameTable.containsKey(position)) {
-				return false;
-			}
-		}
-		return true;
-
-	}
-
-	private boolean checkShipCoordinatesAreNotGreaterTheTable(List<Position> shipPositions) {
-
-		for (Position position : shipPositions) {
-			int x = position.getX();
-			int y = position.getY();
-
-			if (x >= NUMBER_OF_ROWS_AND_COLUMNS || y >= NUMBER_OF_ROWS_AND_COLUMNS) {
-				return false;
-			}else if( x < 0 || y < 0 ){
-				return false;
-			}
-		}
-		return true;
 	}
 
 	private void addShipToTable(List<Position> shipPositions, Ship ship) {
