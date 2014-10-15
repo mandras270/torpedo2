@@ -19,19 +19,18 @@ public class SimpleShipParser implements ShipParser {
 	}
 
 	private List<Position> doParse(int[][] shipPattern) {
-		List<Position> result = new ArrayList<>();
 
-		int xPadding = getXPadding(shipPattern);
-		int yPadding = getYPadding(shipPattern);
+		int yPadding = getXPadding(shipPattern);
+		int xPadding = getYPadding(shipPattern);
 
 		List<Position> rawList = getRawPositionList(shipPattern);
 
 		for (Position position : rawList) {
-			position.shiftX(xPadding);
-			position.shiftY(yPadding);
+			position.shiftX(-xPadding);
+			position.shiftY(-yPadding);
 		}
 
-		return result;
+		return rawList;
 	}
 
 	private List<Position> getRawPositionList(int[][] shipPattern) {
@@ -41,7 +40,7 @@ public class SimpleShipParser implements ShipParser {
 		for (int rowIndex = 0; rowIndex < shipPattern.length; ++rowIndex) {
 			for (int columnIndex = 0; columnIndex < shipPattern[rowIndex].length; ++columnIndex) {
 
-				if (shipPattern[rowIndex][columnIndex] == 1) {
+				if (shipPattern[columnIndex][rowIndex] == 1) {
 					Position rawPosition = getNewPositionWithCoordinates(rowIndex, columnIndex);
 					result.add(rawPosition);
 				}

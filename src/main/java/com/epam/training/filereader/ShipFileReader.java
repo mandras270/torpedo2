@@ -7,11 +7,15 @@ import java.util.List;
 
 import com.epam.training.torpedo.domain.Ship;
 
-public class FileReader {
+public class ShipFileReader {
 
 	private static final int SIZE_OF_PATTERN = 5;
 
 	BufferedReader reader;
+
+	public void setReader(BufferedReader reader) {
+		this.reader = reader;
+	}
 
 	public List<Ship> readShipsFromFile() {
 
@@ -37,18 +41,63 @@ public class FileReader {
 	}
 
 	private List<Ship> parseShip(List<String> oneShip) {
-		return null;
 
+		int shipPatternSize = SIZE_OF_PATTERN - 1;
+
+		int[][] shipPattern = new int[shipPatternSize][];
+
+		for (int i = 0; i < shipPatternSize; ++i) {
+			String line = oneShip.get(i);
+			shipPattern[i] = splitShipParts(line);
+		}
+
+		int occurrence = Integer.valueOf(oneShip.get(shipPatternSize));
+
+		return createShipList(shipPattern, occurrence);
+	}
+
+	private List<Ship> createShipList(int[][] pattern, int occurrence) {
+		Ship ship = new Ship();
+		ship.setPattern(pattern);
+
+		List<Ship> result = new ArrayList<>();
+
+		for (int i = 0; i < occurrence; ++i) {
+			result.add(ship);
+		}
+
+		return result;
+	}
+
+	private int[] splitShipParts(String line) {
+
+		int[] result = new int[SIZE_OF_PATTERN - 1];
+
+		String[] parts = line.split(" ");
+
+		validateSize(result.length, parts.length);
+
+		for (int i = 0; i < result.length; ++i) {
+			int value = Integer.valueOf(parts[i]);
+			result[i] = value;
+		}
+		return result;
+	}
+
+	private void validateSize(int a, int b) {
+		if (a != b) {
+			throw new IllegalArgumentException("Parse error!");
+		}
 	}
 
 	private List<String> removeAll(List<String> stringList, int radius) {
 		List<String> result = new ArrayList<>();
 
-		for( int i = 0; i < radius; ++i ) {
+		for (int i = 0; i < radius; ++i) {
 			String first = stringList.remove(0);
 			result.add(first);
 		}
-		
+
 		return result;
 	}
 

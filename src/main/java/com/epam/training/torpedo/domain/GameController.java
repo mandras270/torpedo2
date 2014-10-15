@@ -17,6 +17,8 @@ public class GameController {
 
 	public void keepShootingTillAllShipsGoDown() {
 
+		System.out.println(gameTable);
+
 		while (gameTable.hasShipsLeft()) {
 			Position markedPosition = shooter.shoot();
 			System.out.println("Shoot on: " + markedPosition);

@@ -50,4 +50,18 @@ public class Ship {
 	private void decreaseHealth() {
 		health--;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		for (int i = 0; i < pattern.length; ++i) {
+			sb.append(" [");
+			for (int k = 0; k < pattern[i].length; ++k) {
+				sb.append(pattern[i][k] + " ");
+			}
+			sb.append("] ");
+		}
+		return sb.toString();
+	}
 }

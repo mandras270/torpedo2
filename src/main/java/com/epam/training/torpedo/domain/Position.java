@@ -1,9 +1,17 @@
 package com.epam.training.torpedo.domain;
 
-public class Position {
+public class Position implements Cloneable {
 
 	private int x;
 	private int y;
+
+	public Position() {
+	}
+
+	public Position(Position otherpPosition) {
+		this.x = otherpPosition.x;
+		this.y = otherpPosition.y;
+	}
 
 	public int getX() {
 		return x;
