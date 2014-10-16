@@ -1,25 +1,17 @@
 package com.epam.training.torpedo.domain;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.epam.training.torpedo.parser.ShipParser;
-import com.epam.training.torpedo.position.Positionable;
-
 public class GameTable {
-
-	public static final int NUMBER_OF_ROWS_AND_COLUMNS = 20;
 
 	@Autowired
 	private Logger gameTableLogger;
 
 	private Map<Position, Ship> gameTable;
-	private ShipParser shipparser;
-	private Positionable randomPositionGenerator;
 	private int numberOfShootsFired;
 
 	public GameTable() {
@@ -31,57 +23,16 @@ public class GameTable {
 		this.gameTableLogger = logger;
 	}
 
-	public void setShipparser(ShipParser shipparser) {
-		this.shipparser = shipparser;
-	}
-
-	public void setRandomPositionGenerator(Positionable randomPositionGenerator) {
-		this.randomPositionGenerator = randomPositionGenerator;
-	}
-
 	public int getNumberOfShootsFired() {
 		return numberOfShootsFired;
 	}
 
-	public void addShip(Ship ship) {
-
-		validateRandomPositionGeneratorIsNotNull();
-
-		gameTableLogger.debug("Creating ship: " + ship);
-
-		List<Position> parsedShipPositions = shipparser.parse(ship);
-
-		List<Position> actualPositions = getRandomPosition(parsedShipPositions);
-
-		System.out.println(actualPositions + " " + ship);
-
-		addShipToTable(actualPositions, ship);
+	public void addShip(Ship ship, Position position) {
+		gameTable.put(position, ship);
 	}
 
-	private List<Position> getRandomPosition(List<Position> original) {
-
-		List<Position> shiftedPositions = randomPositionGenerator.getRandomPositions(original);
-
-		return shiftedPositions;
-	}
-
-	private void validateRandomPositionGeneratorIsNotNull() {
-		if (randomPositionGenerator == null) {
-			throw new IllegalArgumentException("RandomPositionGenerator cannot be null");
-		}
-	}
-
-	public void addAll(List<Ship> shipList) {
-		for (Ship ship : shipList) {
-			addShip(ship);
-		}
-	}
-
-	private void addShipToTable(List<Position> shipPositions, Ship ship) {
-		for (Position position : shipPositions) {
-			gameTable.put(position, ship);
-			gameTableLogger.debug("Ship created with: " + position);
-		}
+	public void addAll(Map<Position, Ship> shipMap) {
+		gameTable.putAll(shipMap);
 	}
 
 	public boolean hasShipsLeft() {
@@ -90,7 +41,7 @@ public class GameTable {
 
 	public ShootResult shootOnPosition(Position position) {
 
-		ShootResult result = ShootResult.NO_HIT;
+		ShootResult result = ShootResult.MISSED;
 
 		++numberOfShootsFired;
 
@@ -109,7 +60,7 @@ public class GameTable {
 		ship.registerHit();
 
 		if (!ship.isAlive()) {
-			result = ShootResult.HIT_AND_SUNK;
+			result = ShootResult.SUNK;
 		}
 
 		return result;
@@ -120,8 +71,8 @@ public class GameTable {
 
 		StringBuilder sb = new StringBuilder();
 
-		for (int row = 0; row < NUMBER_OF_ROWS_AND_COLUMNS; row++) {
-			for (int column = 0; column < NUMBER_OF_ROWS_AND_COLUMNS; ++column) {
+		for (int row = 0; row < numberOfRows; row++) {
+			for (int column = 0; column < numberOfColumn; ++column) {
 
 				Position pos = new Position();
 				pos.setX(column);

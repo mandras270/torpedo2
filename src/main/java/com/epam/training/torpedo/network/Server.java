@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.epam.training.torpedo.ai.Shooter;
 import com.epam.training.torpedo.domain.GameTable;
+import com.epam.training.torpedo.domain.ShootResult;
 
 public class Server {
 
@@ -81,7 +82,8 @@ public class Server {
 
 		try {
 
-			toClient.writeBytes(data + "\n");
+			String dataWithNewLine = addNewLine(data);
+			toClient.writeBytes(dataWithNewLine);
 
 		} catch (IOException e) {
 			throw new RuntimeException("Could NOT send data to client!", e);
@@ -89,8 +91,37 @@ public class Server {
 
 	}
 
+	private String addNewLine(String data) {
+
+		String dataWithNewLine = data;
+		String newLine = System.getProperty("line.separator");
+
+		if (!dataWithNewLine.contains(newLine)) {
+			dataWithNewLine += newLine;
+		}
+
+		return dataWithNewLine;
+	}
+
+	private ShootResult parseClientData(String dataFromClient) {
+		return ShootResult.MISSED;
+	}
+
 	public void start() {
-		serverLogger.debug("Client (" + client.getInetAddress().getHostAddress() + ") connected.");
+
+		String welcome = gameTable.toString();
+		sendDataToClient(welcome);
+
+		while (gameTable.hasShipsLeft()) {
+
+			String dataFromClient = readDataFromClient();
+
+			ShootResult result = parseClientData(dataFromClient);
+
+			sendDataToClient(result.toString());
+
+		}
+
 	}
 
 }

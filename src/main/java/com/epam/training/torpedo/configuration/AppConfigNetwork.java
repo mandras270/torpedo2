@@ -9,19 +9,22 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AppConfigNetwork {
 
-	private static final int PORT = 1234;
+	@Value("${port}")
+	private int port;
 
 	@Bean
 	ServerSocket connection() {
 		try {
 
-			ServerSocket connection = new ServerSocket(PORT);
+			System.out.println("PORT: " + port);
+			ServerSocket connection = new ServerSocket(port);
 			return connection;
 
 		} catch (IOException e) {
@@ -35,6 +38,7 @@ public class AppConfigNetwork {
 		try {
 
 			Socket client = connection().accept();
+			client.setTcpNoDelay(true);
 			return client;
 
 		} catch (IOException e) {
