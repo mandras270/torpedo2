@@ -3,9 +3,6 @@ package com.epam.training.torpedo.network;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -22,26 +19,40 @@ public class Server {
 
 	@Autowired
 	private ServerSocket connection;
-	
+
 	@Autowired
 	private Socket client;
 
+	@Autowired
 	private BufferedReader fromClient;
+
+	@Autowired
 	private DataOutputStream toClient;
 
+	@Autowired
 	private Shooter shooter;
+
+	@Autowired
 	private GameTable gameTable;
 
-	public void setLOGGER(Logger lOGGER) {
-		serverLogger = lOGGER;
+	public void setServerLogger(Logger serverLogger) {
+		this.serverLogger = serverLogger;
 	}
 
 	public void setConnection(ServerSocket connection) {
-		addConnection(connection);
-		addClient();
-		addClientInputStream();
-		addClientOutputStream();
-		serverLogger.debug("Client (" + client.getInetAddress().getHostAddress() + ") connected.");
+		this.connection = connection;
+	}
+
+	public void setClient(Socket client) {
+		this.client = client;
+	}
+
+	public void setFromClient(BufferedReader fromClient) {
+		this.fromClient = fromClient;
+	}
+
+	public void setToClient(DataOutputStream toClient) {
+		this.toClient = toClient;
 	}
 
 	public void setShooter(Shooter shooter) {
@@ -52,58 +63,6 @@ public class Server {
 		this.gameTable = gameTable;
 	}
 
-	/* This setter is needed for unit tests */
-	public void setFromClient(BufferedReader fromClient) {
-		this.fromClient = fromClient;
-	}
-
-	/* This setter is needed for unit tests */
-	public void setToClient(DataOutputStream toClient) {
-		this.toClient = toClient;
-	}
-
-	private void addConnection(ServerSocket connection) {
-		this.connection = connection;
-	}
-
-	private void addClient() {
-
-		try {
-
-			client = connection.accept();
-
-		} catch (IOException e) {
-			throw new RuntimeException("Could not create the socket");
-		}
-	}
-
-	private void addClientInputStream() {
-
-		InputStream clientInput;
-		try {
-
-			clientInput = client.getInputStream();
-			InputStreamReader clientInputStream = new InputStreamReader(clientInput);
-			fromClient = new BufferedReader(clientInputStream);
-
-		} catch (IOException e) {
-			throw new RuntimeException("Could not get client's InputStream." + e);
-		}
-	}
-
-	private void addClientOutputStream() {
-
-		OutputStream clientOutput;
-		try {
-
-			clientOutput = client.getOutputStream();
-			toClient = new DataOutputStream(clientOutput);
-
-		} catch (IOException e) {
-			throw new RuntimeException("Could not get client's OutputStream." + e);
-		}
-	}
-
 	private String readDataFromClient() {
 
 		String buffer;
@@ -112,7 +71,7 @@ public class Server {
 			buffer = fromClient.readLine();
 
 		} catch (IOException e) {
-			throw new RuntimeException("Could not read data from client.", e);
+			throw new RuntimeException("Could not read data from client!", e);
 		}
 
 		return buffer;
@@ -125,27 +84,13 @@ public class Server {
 			toClient.writeBytes(data + "\n");
 
 		} catch (IOException e) {
-			throw new RuntimeException("Could not send data to client");
+			throw new RuntimeException("Could NOT send data to client!", e);
 		}
 
 	}
 
-	public void start(){}
-	
-	public void close() {
-
-		try {
-			client.close();
-		} catch (IOException e) {
-			throw new RuntimeException("Could not close client socket", e);
-		}
-
-		try {
-			connection.close();
-		} catch (IOException e) {
-			throw new RuntimeException("Could not close server socket", e);
-		}
-
+	public void start() {
+		serverLogger.debug("Client (" + client.getInetAddress().getHostAddress() + ") connected.");
 	}
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.epam.training.torpedo.parser.ShipParser;
 import com.epam.training.torpedo.position.Positionable;
@@ -13,7 +14,8 @@ public class GameTable {
 
 	public static final int NUMBER_OF_ROWS_AND_COLUMNS = 20;
 
-	private static Logger LOGGER;
+	@Autowired
+	private Logger gameTableLogger;
 
 	private Map<Position, Ship> gameTable;
 	private ShipParser shipparser;
@@ -22,12 +24,11 @@ public class GameTable {
 
 	public GameTable() {
 		gameTable = new HashMap<>();
-		LOGGER.info("New GameTable created!");
 		numberOfShootsFired = 0;
 	}
 
-	public static void setLOGGER(Logger lOGGER) {
-		LOGGER = lOGGER;
+	public void setLogger(Logger logger) {
+		this.gameTableLogger = logger;
 	}
 
 	public void setShipparser(ShipParser shipparser) {
@@ -46,7 +47,7 @@ public class GameTable {
 
 		validateRandomPositionGeneratorIsNotNull();
 
-		LOGGER.debug("Creating ship: " + ship);
+		gameTableLogger.debug("Creating ship: " + ship);
 
 		List<Position> parsedShipPositions = shipparser.parse(ship);
 
@@ -79,7 +80,7 @@ public class GameTable {
 	private void addShipToTable(List<Position> shipPositions, Ship ship) {
 		for (Position position : shipPositions) {
 			gameTable.put(position, ship);
-			LOGGER.debug("Ship created with: " + position);
+			gameTableLogger.debug("Ship created with: " + position);
 		}
 	}
 
