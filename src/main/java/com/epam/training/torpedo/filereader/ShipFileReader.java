@@ -1,4 +1,4 @@
-package com.epam.training.filereader;
+package com.epam.training.torpedo.filereader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -57,12 +57,15 @@ public class ShipFileReader {
 	}
 
 	private List<Ship> createShipList(int[][] pattern, int occurrence) {
-		Ship ship = new Ship();
-		ship.setPattern(pattern);
 
 		List<Ship> result = new ArrayList<>();
 
 		for (int i = 0; i < occurrence; ++i) {
+			
+			Ship ship = new Ship();
+			
+			ship.setPattern(pattern);
+			
 			result.add(ship);
 		}
 

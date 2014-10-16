@@ -6,22 +6,24 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 
-import com.epam.training.position.Positionable;
 import com.epam.training.torpedo.parser.ShipParser;
+import com.epam.training.torpedo.position.Positionable;
 
 public class GameTable {
 
-	public static final int NUMBER_OF_ROWS_AND_COLUMNS = 10;
+	public static final int NUMBER_OF_ROWS_AND_COLUMNS = 20;
 
 	private static Logger LOGGER;
 
 	private Map<Position, Ship> gameTable;
 	private ShipParser shipparser;
 	private Positionable randomPositionGenerator;
+	private int numberOfShootsFired;
 
 	public GameTable() {
 		gameTable = new HashMap<>();
 		LOGGER.info("New GameTable created!");
+		numberOfShootsFired = 0;
 	}
 
 	public static void setLOGGER(Logger lOGGER) {
@@ -36,6 +38,10 @@ public class GameTable {
 		this.randomPositionGenerator = randomPositionGenerator;
 	}
 
+	public int getNumberOfShootsFired() {
+		return numberOfShootsFired;
+	}
+
 	public void addShip(Ship ship) {
 
 		validateRandomPositionGeneratorIsNotNull();
@@ -45,9 +51,9 @@ public class GameTable {
 		List<Position> parsedShipPositions = shipparser.parse(ship);
 
 		List<Position> actualPositions = getRandomPosition(parsedShipPositions);
-		
-		System.out.println( actualPositions + " " + ship );
-		
+
+		System.out.println(actualPositions + " " + ship);
+
 		addShipToTable(actualPositions, ship);
 	}
 
@@ -84,6 +90,8 @@ public class GameTable {
 	public ShootResult shootOnPosition(Position position) {
 
 		ShootResult result = ShootResult.NO_HIT;
+
+		++numberOfShootsFired;
 
 		if (gameTable.containsKey(position)) {
 			Ship targetShip = gameTable.remove(position);

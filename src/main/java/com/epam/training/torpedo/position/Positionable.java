@@ -1,4 +1,4 @@
-package com.epam.training.position;
+package com.epam.training.torpedo.position;
 
 import java.util.List;
 
