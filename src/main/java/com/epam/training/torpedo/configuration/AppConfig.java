@@ -8,8 +8,8 @@ import com.epam.training.torpedo.network.Client;
 import com.epam.training.torpedo.network.Server;
 
 @Configuration
-@Import({ AppConfigBasics.class, AppConfigGameTable.class, AppConfigLogger.class, AppConfigNetwork.class,
-		AppConfigShooter.class })
+@Import({ AppConfigBasics.class, AppConfigGameTable.class, AppConfigLogger.class,
+		AppConfigNetwork.class, AppConfigShooter.class })
 public class AppConfig {
 
 	@Bean

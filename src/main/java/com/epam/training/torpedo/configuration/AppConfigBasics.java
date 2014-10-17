@@ -13,6 +13,15 @@ import org.springframework.core.io.Resource;
 @Configuration
 public class AppConfigBasics {
 
+	@Bean
+	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+
+		PropertySourcesPlaceholderConfigurer result = new PropertySourcesPlaceholderConfigurer();
+		result.setFileEncoding("UTF-8");
+
+		return result;
+	}
+
 	@Value("classpath:patterns.txt")
 	private Resource patternData;
 
@@ -27,15 +36,6 @@ public class AppConfigBasics {
 
 			throw new RuntimeException("Error while reading pattern file!", e);
 		}
-	}
-
-	@Bean
-	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-
-		PropertySourcesPlaceholderConfigurer result = new PropertySourcesPlaceholderConfigurer();
-		result.setFileEncoding("UTF-8");
-
-		return result;
 	}
 
 }

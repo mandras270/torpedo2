@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.epam.training.torpedo.ai.Shooter;
 import com.epam.training.torpedo.domain.GameTable;
-import com.epam.training.torpedo.domain.ShootResult;
 
 public class Server {
 
@@ -103,24 +102,51 @@ public class Server {
 		return dataWithNewLine;
 	}
 
-	private ShootResult parseClientData(String dataFromClient) {
-		return ShootResult.MISSED;
+	private String getErrorMessage(String clientData) {
+		String message = "ERROR RECIVED: " + clientData;
+		return message;
 	}
 
-	public void start() {
+	private String getWelcomeMessage() {
 
-		String welcome = gameTable.toString();
-		sendDataToClient(welcome);
+		int numberOfRows = gameTable.getNumberOfRows();
+		int numberOfColumns = gameTable.getNumberOfColumn();
+
+		String result = "WELCOME " + numberOfRows + "," + numberOfColumns;
+
+		return result;
+	}
+
+	private String getFireMessage(String rawPosition) {
+		return null;
+	}
+
+	private String getEnemyWonMessage() {
+		String messgae = "WON";
+		return messgae;
+	}
+
+	private void play() {
 
 		while (gameTable.hasShipsLeft()) {
 
 			String dataFromClient = readDataFromClient();
 
-			ShootResult result = parseClientData(dataFromClient);
+			String result = parseClientData(dataFromClient);
 
-			sendDataToClient(result.toString());
+			sendDataToClient(result);
 
 		}
+	}
+
+	public void start() {
+
+		String welcome = getWelcomeMessage();
+		sendDataToClient(welcome);
+
+		play();
+
+		serverLogger.debug("Game ended!");
 
 	}
 
