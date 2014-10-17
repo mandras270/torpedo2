@@ -16,14 +16,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AppConfigNetwork {
 
-	@Value("${port}")
-	private int port;
+	@Value("${port:1234}")
+	int port;
 
 	@Bean
 	ServerSocket connection() {
 		try {
 
-			System.out.println("PORT: " + port);
 			ServerSocket connection = new ServerSocket(port);
 			return connection;
 
@@ -33,7 +32,7 @@ public class AppConfigNetwork {
 	}
 
 	@Bean
-	Socket client() {
+	Socket clientSocket() {
 
 		try {
 
@@ -51,7 +50,7 @@ public class AppConfigNetwork {
 
 		try {
 
-			InputStream clientInput = client().getInputStream();
+			InputStream clientInput = clientSocket().getInputStream();
 			InputStreamReader clientInputStream = new InputStreamReader(clientInput);
 			BufferedReader fromClient = new BufferedReader(clientInputStream);
 			return fromClient;
@@ -66,7 +65,7 @@ public class AppConfigNetwork {
 
 		try {
 
-			OutputStream clientOutput = client().getOutputStream();
+			OutputStream clientOutput = clientSocket().getOutputStream();
 			DataOutputStream toClient = new DataOutputStream(clientOutput);
 			return toClient;
 

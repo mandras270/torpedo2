@@ -5,8 +5,15 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 public class GameTable {
+
+	@Value("${row:25}")
+	private int numberOfRows;
+
+	@Value("${column:25}")
+	private int numberOfColumn;
 
 	@Autowired
 	private Logger gameTableLogger;
@@ -21,6 +28,14 @@ public class GameTable {
 
 	public void setLogger(Logger logger) {
 		this.gameTableLogger = logger;
+	}
+
+	public int getNumberOfRows() {
+		return numberOfRows;
+	}
+
+	public int getNumberOfColumn() {
+		return numberOfColumn;
 	}
 
 	public int getNumberOfShootsFired() {

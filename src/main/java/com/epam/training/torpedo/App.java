@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
 
+import com.epam.training.torpedo.configuration.AppConfig;
 import com.epam.training.torpedo.network.Server;
 
 public class App {
@@ -12,10 +13,11 @@ public class App {
 
 		SimpleCommandLinePropertySource ps = new SimpleCommandLinePropertySource(args);
 
-		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(
-				"com.epam.training.torpedo.configuration");
+		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
 
 		applicationContext.getEnvironment().getPropertySources().addFirst(ps);
+
+		applicationContext.register(AppConfig.class);
 
 		applicationContext.refresh();
 
