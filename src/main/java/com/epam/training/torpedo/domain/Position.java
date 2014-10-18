@@ -8,6 +8,11 @@ public class Position {
 	public Position() {
 	}
 
+	public Position(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+
 	public Position(Position otherpPosition) {
 		this.x = otherpPosition.x;
 		this.y = otherpPosition.y;

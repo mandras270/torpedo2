@@ -54,28 +54,34 @@ public class GameTable {
 		return gameTable.size() > 0;
 	}
 
-	public ShootResult shootOnPosition(Position position) {
+	public ResponseData shootOnPosition(Position position) {
 
-		ShootResult result = ShootResult.MISSED;
+		ResponseData result = ResponseData.MISSED;
 
 		++numberOfShootsFired;
 
 		if (gameTable.containsKey(position)) {
+
 			Ship targetShip = gameTable.remove(position);
 			result = shootOnShip(targetShip);
+
+		}
+
+		if (!hasShipsLeft()) {
+			result = ResponseData.WON;
 		}
 
 		return result;
 	}
 
-	private ShootResult shootOnShip(Ship ship) {
+	private ResponseData shootOnShip(Ship ship) {
 
-		ShootResult result = ShootResult.HIT;
+		ResponseData result = ResponseData.HIT;
 
 		ship.registerHit();
 
 		if (!ship.isAlive()) {
-			result = ShootResult.SUNK;
+			result = ResponseData.SUNK;
 		}
 
 		return result;

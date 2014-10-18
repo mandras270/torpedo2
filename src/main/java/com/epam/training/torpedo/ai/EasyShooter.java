@@ -11,6 +11,18 @@ public class EasyShooter implements Shooter {
 	@Autowired
 	private Logger easyShooterLogger;
 
+	int numberOfRows;
+
+	int numberOfColumns;
+
+	public void setNumberOfRows(int numberOfRows) {
+		this.numberOfRows = numberOfRows;
+	}
+
+	public void setNumberOfColumns(int numberOfColumns) {
+		this.numberOfColumns = numberOfColumns;
+	}
+
 	@Override
 	public Position shoot() {
 		int x = getRandomCoordinate();

@@ -9,6 +9,7 @@ import com.epam.training.torpedo.configuration.AppConfig;
 import com.epam.training.torpedo.network.Server;
 
 public class App {
+
 	public static void main(String[] args) throws FileNotFoundException {
 
 		SimpleCommandLinePropertySource ps = new SimpleCommandLinePropertySource(args);
