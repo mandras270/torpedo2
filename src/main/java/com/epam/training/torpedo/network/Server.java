@@ -99,18 +99,44 @@ public class Server {
 			return buffer;
 
 		} catch (IOException e) {
-			throw new RuntimeException("Could not read data from client!", e);
+			throw new RuntimeException("Could NOT read data from client!", e);
 		}
+	}
+
+	private void initializeShooter() {
+
+		int numberOfColums = gameTable.getNumberOfColumn();
+
+		int numberOfRows = gameTable.getNumberOfRows();
+
+		shooter.setNumberOfColumns(numberOfColums);
+		shooter.setNumberOfRows(numberOfRows);
+
 	}
 
 	public void start() {
 
+		initializeShooter();
+
 		NetworkState networkState = NetworkState.CONTINUE;
+
+		sendWelcomeMessage();
 
 		while (networkState == NetworkState.CONTINUE) {
 
 			networkState = gameController();
 		}
+
+	}
+
+	private void sendWelcomeMessage() {
+
+		String welcomeMessageWithoutEndOfLine = "WELCOME " + gameTable.getNumberOfRows() + ","
+				+ gameTable.getNumberOfColumn();
+
+		String welcomeMessage = addMissingEndOfLineCharacter(welcomeMessageWithoutEndOfLine);
+
+		sendDataToClient(welcomeMessage);
 
 	}
 
@@ -154,7 +180,7 @@ public class Server {
 			break;
 		default:
 			result = ResponseData.ERROR;
-			serverLogger.debug("Unknow message recived! " + dataFromClient);
+			serverLogger.debug("Unknow message received! " + dataFromClient);
 			break;
 		}
 
@@ -205,7 +231,7 @@ public class Server {
 	private String getFirePosition() {
 		Position markedPosition = shooter.shoot();
 
-		String fireMessage = "FIRE " + markedPosition.getX() + ", " + markedPosition.getY();
+		String fireMessage = "FIRE " + markedPosition.getX() + "," + markedPosition.getY();
 
 		return fireMessage;
 	}
@@ -217,25 +243,35 @@ public class Server {
 
 		switch (parts[0]) {
 		case "HIT":
-			// register HIT
+			shooter.registerLastShootHit();
+			result = NetworkState.CONTINUE;
 			break;
 		case "SUNK":
-			// register SUNK
+			shooter.registerLastShootSunk();
+			result = NetworkState.CONTINUE;
 			break;
 		case "MISSED":
-			// register miss
+			shooter.registerLastShootMissed();
+			result = NetworkState.CONTINUE;
 			break;
 		case "WON":
-			// saywon
-			break;
-		case "ERROR":
-			// register error
+			announceWon();
+			result = NetworkState.FINISHED;
 			break;
 		default:
-			// unknow
-			// register quir!!
+			sayError(shoot);
+			result = NetworkState.FINISHED;
 		}
 
 		return result;
 	}
+
+	private void sayError(String errorMessage) {
+		serverLogger.debug("Client returned with error: " + errorMessage);
+	}
+
+	private void announceWon() {
+		serverLogger.debug("Congratulations, you won!");
+	}
+
 }

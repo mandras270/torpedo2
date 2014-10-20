@@ -1,35 +1,25 @@
 package com.epam.training.torpedo.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Ship {
 
-	private int[][] pattern;
 	private int health;
 
-	public int[][] getPattern() {
-		return pattern;
+	private List<Position> rawPositionsList;
+
+	public Ship() {
+		super();
+		rawPositionsList = new ArrayList<>();
 	}
 
-	public void setPattern(int[][] pattern) {
-		addPattern(pattern);
-		addHealth(pattern);
+	public List<Position> getRawPositionsList() {
+		return rawPositionsList;
 	}
 
-	private void addPattern(int[][] pattern) {
-		this.pattern = pattern;
-	}
-
-	private void addHealth(int[][] pattern) {
-		int health = 0;
-
-		for (int rowIndex = 0; rowIndex < pattern.length; ++rowIndex) {
-			for (int columnIndex = 0; columnIndex < pattern[rowIndex].length; ++columnIndex) {
-				if (pattern[rowIndex][columnIndex] == 1) {
-					++health;
-				}
-			}
-		}
-
-		this.health = health;
+	public void addRawPositions(List<Position> rawPositionsList) {
+		this.rawPositionsList = rawPositionsList;
 	}
 
 	public boolean isAlive() {
@@ -53,15 +43,7 @@ public class Ship {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-
-		for (int i = 0; i < pattern.length; ++i) {
-			sb.append(" [");
-			for (int k = 0; k < pattern[i].length; ++k) {
-				sb.append(pattern[i][k] + " ");
-			}
-			sb.append("] ");
-		}
-		return sb.toString();
+		String result = "Ship - " + this.hashCode();
+		return result;
 	}
 }

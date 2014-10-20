@@ -1,11 +1,16 @@
 package com.epam.training.torpedo.domain;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+
+import com.epam.training.torpedo.ai.RandomPositionGenerator;
 
 public class GameTable {
 
@@ -18,11 +23,20 @@ public class GameTable {
 	@Autowired
 	private Logger gameTableLogger;
 
+	@Autowired
+	private RandomPositionGenerator positionGenerator;
+
+	@Resource(name = "rawShips")
+	private List<Ship> rawShips;
+
 	private Map<Position, Ship> gameTable;
+
+	private List<Position> sunkShips;
+
 	private int numberOfShootsFired;
 
 	public GameTable() {
-		gameTable = new HashMap<>();
+		sunkShips = new ArrayList<>();
 		numberOfShootsFired = 0;
 	}
 
@@ -50,6 +64,10 @@ public class GameTable {
 		gameTable.putAll(shipMap);
 	}
 
+	public void positionShips() {
+		gameTable = positionGenerator.getShipsAndPositions(rawShips);
+	}
+
 	public boolean hasShipsLeft() {
 		return gameTable.size() > 0;
 	}
@@ -63,6 +81,9 @@ public class GameTable {
 		if (gameTable.containsKey(position)) {
 
 			Ship targetShip = gameTable.remove(position);
+
+			sunkShips.add(position);
+
 			result = shootOnShip(targetShip);
 
 		}
@@ -101,6 +122,8 @@ public class GameTable {
 
 				if (gameTable.containsKey(pos)) {
 					sb.append("O ");
+				} else if (sunkShips.contains(pos)) {
+					sb.append("X ");
 				} else {
 					sb.append(". ");
 				}

@@ -47,6 +47,45 @@ public class Position {
 		this.y += otherPosition.y;
 	}
 
+	public Position getTopSibling() {
+
+		Position clonepPosition = new Position(this);
+
+		clonepPosition.y--;
+
+		return clonepPosition;
+
+	}
+
+	public Position getBottomSibling() {
+
+		Position clonepPosition = new Position(this);
+
+		clonepPosition.y++;
+
+		return clonepPosition;
+	}
+
+	public Position getLeftSibling() {
+
+		Position clonepPosition = new Position(this);
+
+		clonepPosition.x--;
+
+		return clonepPosition;
+
+	}
+
+	public Position getRightSibling() {
+
+		Position clonepPosition = new Position(this);
+
+		clonepPosition.x++;
+
+		return clonepPosition;
+
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
