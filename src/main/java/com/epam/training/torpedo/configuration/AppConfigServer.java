@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class AppConfigNetwork {
+public class AppConfigServer {
 
 	@Value("${port:1234}")
 	int port;
