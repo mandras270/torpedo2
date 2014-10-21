@@ -1,6 +1,7 @@
 package com.epam.training.torpedo;
 
-import java.io.FileNotFoundException;
+import static com.epam.training.torpedo.domain.Messages.CLIENT;
+import static com.epam.training.torpedo.domain.Messages.SERVER;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
@@ -11,10 +12,9 @@ import com.epam.training.torpedo.network.Server;
 
 public class App {
 
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) {
 
-		SimpleCommandLinePropertySource ps = new SimpleCommandLinePropertySource(
-				args);
+		SimpleCommandLinePropertySource ps = new SimpleCommandLinePropertySource(args);
 
 		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
 
@@ -24,12 +24,22 @@ public class App {
 
 		applicationContext.refresh();
 
-		Client client = applicationContext.getBean("client", Client.class);
+		String gameMode = applicationContext.getBean("gameMode", String.class);
 
-		// Server server = applicationContext.getBean("server", Server.class);
+		gameMode = gameMode.toUpperCase();
 
-		// server.start();
+		if (gameMode.equals(SERVER)) {
 
+			Server server = applicationContext.getBean("server", Server.class);
+			server.start();
+
+		} else if (gameMode.equals(CLIENT)) {
+
+			Client client = applicationContext.getBean("client", Client.class);
+
+			client.start();
+
+		}
 		applicationContext.close();
 
 	}

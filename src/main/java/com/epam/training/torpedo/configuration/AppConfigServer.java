@@ -9,9 +9,11 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 @Configuration
 public class AppConfigServer {
@@ -20,6 +22,7 @@ public class AppConfigServer {
 	int port;
 
 	@Bean
+	@Lazy
 	ServerSocket connection() {
 		try {
 
@@ -32,6 +35,7 @@ public class AppConfigServer {
 	}
 
 	@Bean
+	@Lazy
 	Socket clientSocket() {
 
 		try {
@@ -46,6 +50,8 @@ public class AppConfigServer {
 	}
 
 	@Bean
+	@Lazy
+	@Qualifier("fromClient")
 	BufferedReader fromClient() {
 
 		try {
@@ -61,6 +67,8 @@ public class AppConfigServer {
 	}
 
 	@Bean
+	@Lazy
+	@Qualifier("toClient")
 	DataOutputStream toClient() {
 
 		try {

@@ -16,4 +16,5 @@ public interface Shooter {
 
 	public void registerLastShootSunk();
 
+	public void init();
 }

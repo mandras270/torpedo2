@@ -7,9 +7,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 @Configuration
 public class AppConfigClient {
@@ -21,7 +23,8 @@ public class AppConfigClient {
 	String serverIp;
 
 	@Bean
-	Socket server() {
+	@Lazy
+	Socket serverConnection() {
 		try {
 
 			Socket server = new Socket(serverIp, port);
@@ -33,35 +36,35 @@ public class AppConfigClient {
 	}
 
 	@Bean
-	DataOutputStream ToServer() {
+	@Lazy
+	@Qualifier("toServer")
+	DataOutputStream toServer() {
 
 		try {
 
-			DataOutputStream toServer = new DataOutputStream(server()
-					.getOutputStream());
+			DataOutputStream toServer = new DataOutputStream(serverConnection().getOutputStream());
 			return toServer;
 
 		} catch (IOException e) {
-			throw new IllegalArgumentException(
-					"Could NOT get server output stream", e);
+			throw new IllegalArgumentException("Could NOT get server output stream", e);
 		}
 	}
 
-	@Bean
-	InputStreamReader InputStreamReader(InputStream in) {
+	InputStreamReader inputStreamReader(InputStream in) {
 		return new InputStreamReader(in);
 	}
 
 	@Bean
-	BufferedReader FromServer() {
+	@Lazy
+	@Qualifier("fromServer")
+	BufferedReader fromServer() {
 
 		try {
-			BufferedReader FromServer = new BufferedReader(
-					InputStreamReader(server().getInputStream()));
+			BufferedReader FromServer = new BufferedReader(inputStreamReader(serverConnection()
+					.getInputStream()));
 			return FromServer;
 		} catch (IOException e) {
-			throw new IllegalArgumentException(
-					"Could NOT get server input stream!", e);
+			throw new IllegalArgumentException("Could NOT get server input stream!", e);
 		}
 	}
 }

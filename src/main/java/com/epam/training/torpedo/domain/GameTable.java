@@ -10,18 +10,17 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.epam.training.torpedo.ai.RandomPositionGenerator;
+import com.epam.training.torpedo.position.RandomPositionGenerator;
 
-public class GameTable {
+public class GameTable implements Loggable {
+
+	private Logger logger;
 
 	@Value("${row:25}")
 	private int numberOfRows;
 
 	@Value("${column:25}")
 	private int numberOfColumn;
-
-	@Autowired
-	private Logger gameTableLogger;
 
 	@Autowired
 	private RandomPositionGenerator positionGenerator;
@@ -40,8 +39,19 @@ public class GameTable {
 		numberOfShootsFired = 0;
 	}
 
+	@Override
 	public void setLogger(Logger logger) {
-		this.gameTableLogger = logger;
+		this.logger = logger;
+	}
+
+	public void setNumberOfRows(int numberOfRows) {
+		this.numberOfRows = numberOfRows;
+		positionGenerator.setNumberOfRows(numberOfRows);
+	}
+
+	public void setNumberOfColumn(int numberOfColumn) {
+		this.numberOfColumn = numberOfColumn;
+		positionGenerator.setNumberOfColumn(numberOfColumn);
 	}
 
 	public int getNumberOfRows() {
@@ -72,9 +82,9 @@ public class GameTable {
 		return gameTable.size() > 0;
 	}
 
-	public ResponseData shootOnPosition(Position position) {
+	public ShootAction shootOnPosition(Position position) {
 
-		ResponseData result = ResponseData.MISSED;
+		ShootAction result = ShootAction.MISSED;
 
 		++numberOfShootsFired;
 
@@ -84,25 +94,27 @@ public class GameTable {
 
 			sunkShips.add(position);
 
+			logger.debug('\n' + this.toString());
+
 			result = shootOnShip(targetShip);
 
 		}
 
 		if (!hasShipsLeft()) {
-			result = ResponseData.WON;
+			result = ShootAction.WON;
 		}
 
 		return result;
 	}
 
-	private ResponseData shootOnShip(Ship ship) {
+	private ShootAction shootOnShip(Ship ship) {
 
-		ResponseData result = ResponseData.HIT;
+		ShootAction result = ShootAction.HIT;
 
 		ship.registerHit();
 
 		if (!ship.isAlive()) {
-			result = ResponseData.SUNK;
+			result = ShootAction.SUNK;
 		}
 
 		return result;

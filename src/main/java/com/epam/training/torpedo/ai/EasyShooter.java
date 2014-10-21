@@ -5,14 +5,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import com.epam.training.torpedo.domain.Loggable;
 import com.epam.training.torpedo.domain.Position;
 
-public class EasyShooter implements Shooter {
+public class EasyShooter implements Shooter, Loggable {
 
-	@Autowired
-	private Logger easyShooterLogger;
+	private Logger logger;
 
 	int numberOfRows;
 	int numberOfColumns;
@@ -24,7 +23,11 @@ public class EasyShooter implements Shooter {
 
 	public EasyShooter() {
 		likelyToContainShip = new ArrayList<>();
-		setStillAvailablePositions();
+	}
+
+	@Override
+	public void setLogger(Logger logger) {
+		this.logger = logger;
 	}
 
 	@Override
@@ -43,12 +46,18 @@ public class EasyShooter implements Shooter {
 		Position bestPosition = null;
 
 		if (!likelyToContainShip.isEmpty()) {
+
 			bestPosition = likelyToContainShip.remove(0);
+
 		} else if (!stillAvailablePositions.isEmpty()) {
+
 			bestPosition = stillAvailablePositions.remove(0);
+
 		} else {
 			throw new IllegalArgumentException("Out of positions to shoot on!");
 		}
+
+		lastPosition = bestPosition;
 
 		return bestPosition;
 	}
@@ -56,10 +65,10 @@ public class EasyShooter implements Shooter {
 	@Override
 	public void registerLastShootHit() {
 
-		addBottomSibling();
+		// addBottomSibling();
 		addLeftSibling();
 		addRightSibling();
-		addTopSibling();
+		// addTopSibling();
 
 	}
 
@@ -67,7 +76,8 @@ public class EasyShooter implements Shooter {
 
 		Position leftSibling = lastPosition.getLeftSibling();
 
-		if (positionIsValid(lastPosition)) {
+		if (positionIsValid(leftSibling) && stillAvailablePositions.contains(leftSibling)) {
+			stillAvailablePositions.remove(leftSibling);
 			likelyToContainShip.add(leftSibling);
 		}
 
@@ -76,37 +86,20 @@ public class EasyShooter implements Shooter {
 	private void addRightSibling() {
 		Position rightSibling = lastPosition.getRightSibling();
 
-		if (positionIsValid(rightSibling)) {
+		if (positionIsValid(rightSibling) && stillAvailablePositions.contains(rightSibling)) {
+			stillAvailablePositions.remove(rightSibling);
 			likelyToContainShip.add(rightSibling);
 		}
 	}
 
-	private void addTopSibling() {
-		Position topSibling = lastPosition.getTopSibling();
-
-		if (positionIsValid(topSibling)) {
-			likelyToContainShip.add(topSibling);
-		}
-	}
-
-	private void addBottomSibling() {
-
-		Position bottomSibling = lastPosition.getBottomSibling();
-
-		if (positionIsValid(bottomSibling)) {
-			likelyToContainShip.add(bottomSibling);
-		}
-
-	}
-
 	@Override
 	public void registerLastShootMissed() {
-		easyShooterLogger.debug("Shoot missed: " + lastPosition);
+		logger.debug("Shoot missed: " + lastPosition);
 	}
 
 	@Override
 	public void registerLastShootSunk() {
-		easyShooterLogger.debug("Enemy ship has sunk: " + lastPosition);
+		logger.debug("Enemy ship has sunk: " + lastPosition);
 	}
 
 	private boolean positionIsValid(Position position) {
@@ -126,7 +119,9 @@ public class EasyShooter implements Shooter {
 		return result;
 	}
 
-	private void setStillAvailablePositions() {
+	@Override
+	public void init() {
+
 		List<Position> stillAvailablePositions = new ArrayList<>();
 
 		for (int row = 0; row < numberOfRows; row++) {

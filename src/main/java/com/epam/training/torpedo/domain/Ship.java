@@ -14,6 +14,10 @@ public class Ship {
 		rawPositionsList = new ArrayList<>();
 	}
 
+	public void setHealth(int health) {
+		this.health = health;
+	}
+
 	public List<Position> getRawPositionsList() {
 		return rawPositionsList;
 	}
@@ -43,7 +47,7 @@ public class Ship {
 
 	@Override
 	public String toString() {
-		String result = "Ship - " + this.hashCode();
+		String result = "Ship - " + health;
 		return result;
 	}
 }

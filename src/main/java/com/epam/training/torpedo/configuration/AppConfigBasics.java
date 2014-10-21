@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
+import com.epam.training.torpedo.beanpostprocessors.AddLoggerBeanPostProcessor;
 import com.epam.training.torpedo.beanpostprocessors.CreateGameTableBeanPostProcessor;
 
 @Configuration
@@ -21,5 +22,10 @@ public class AppConfigBasics {
 	@Bean
 	CreateGameTableBeanPostProcessor createGameTableBeanPostProcessor() {
 		return new CreateGameTableBeanPostProcessor();
+	}
+
+	@Bean
+	AddLoggerBeanPostProcessor addLoggerBeanPostProcessor() {
+		return new AddLoggerBeanPostProcessor();
 	}
 }
