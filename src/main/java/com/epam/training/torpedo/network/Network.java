@@ -162,6 +162,32 @@ public abstract class Network implements Loggable {
 		return dataWithNewLine;
 	}
 
+	NetworkState ShootAtEnemy() {
+
+		String firePosition = getFirePosition();
+		sendData(firePosition);
+
+		String clientResponse = readData();
+		NetworkState parsedClientResponse = parseResponseOnShoot(clientResponse);
+
+		return parsedClientResponse;
+	}
+
+	NetworkState processEnemyShoot() {
+
+		String dataFromClient = readData();
+
+		ShootAction shootResult = parseEnemyShoot(dataFromClient);
+
+		String responseData = shootResult.toString();
+
+		sendData(responseData);
+
+		NetworkState networkStateBasedOnResponsData = getNetworkStateBasedOnResponsData(shootResult);
+
+		return networkStateBasedOnResponsData;
+	}
+
 	void sayError(String errorMessage) {
 		logger.debug("Unexpected message: " + errorMessage);
 	}
@@ -189,5 +215,9 @@ public abstract class Network implements Loggable {
 	abstract void init();
 
 	abstract NetworkState gameController();
+
+	abstract void sendData(String data);
+
+	abstract String readData();
 
 }

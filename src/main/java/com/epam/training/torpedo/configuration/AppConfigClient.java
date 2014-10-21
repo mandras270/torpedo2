@@ -28,6 +28,7 @@ public class AppConfigClient {
 		try {
 
 			Socket server = new Socket(serverIp, port);
+			server.setTcpNoDelay(true);
 			return server;
 
 		} catch (IOException e) {

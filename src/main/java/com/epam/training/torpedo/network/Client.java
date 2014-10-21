@@ -27,7 +27,8 @@ public class Client extends Network {
 		this.fromServer = fromServer;
 	}
 
-	private void sendDataToServer(String data) {
+	@Override
+	void sendData(String data) {
 
 		try {
 
@@ -40,7 +41,8 @@ public class Client extends Network {
 
 	}
 
-	private String readDataFromServer() {
+	@Override
+	String readData() {
 
 		try {
 
@@ -78,12 +80,19 @@ public class Client extends Network {
 
 	@Override
 	NetworkState gameController() {
-		// TODO Auto-generated method stub
-		return null;
+
+		NetworkState networkState = ShootAtEnemy();
+
+		if (networkState == NetworkState.CONTINUE) {
+
+			networkState = processEnemyShoot();
+
+		}
+		return networkState;
 	};
 
 	private String readWelcomeMessage() {
-		String welcomeMessage = readDataFromServer();
+		String welcomeMessage = readData();
 		return welcomeMessage;
 	}
 
@@ -101,14 +110,4 @@ public class Client extends Network {
 		return tableSizeParts;
 	}
 
-	private NetworkState ShootAtEnemy() {
-
-		String firePosition = getFirePosition();
-		sendDataToServer(firePosition);
-
-		String clientResponse = readDataFromServer();
-		NetworkState parsedClientResponse = parseResponseOnShoot(clientResponse);
-
-		return parsedClientResponse;
-	}
 }

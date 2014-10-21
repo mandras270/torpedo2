@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.epam.training.torpedo.domain.NetworkState;
-import com.epam.training.torpedo.domain.ShootAction;
 
 public class Server extends Network {
 
@@ -28,7 +27,8 @@ public class Server extends Network {
 		this.toClient = toClient;
 	}
 
-	private void sendDataToClient(String data) {
+	@Override
+	void sendData(String data) {
 
 		try {
 
@@ -41,7 +41,8 @@ public class Server extends Network {
 
 	}
 
-	private String readDataFromClient() {
+	@Override
+	String readData() {
 
 		try {
 
@@ -68,7 +69,7 @@ public class Server extends Network {
 
 		String welcomeMessage = addMissingEndOfLineCharacter(welcomeMessageWithoutEndOfLine);
 
-		sendDataToClient(welcomeMessage);
+		sendData(welcomeMessage);
 
 	}
 
@@ -82,35 +83,7 @@ public class Server extends Network {
 			networkState = ShootAtEnemy();
 
 		}
-
 		return networkState;
-
-	}
-
-	private NetworkState processEnemyShoot() {
-
-		String dataFromClient = readDataFromClient();
-
-		ShootAction shootResult = parseEnemyShoot(dataFromClient);
-
-		String responseData = shootResult.toString();
-
-		sendDataToClient(responseData);
-
-		NetworkState networkStateBasedOnResponsData = getNetworkStateBasedOnResponsData(shootResult);
-
-		return networkStateBasedOnResponsData;
-	}
-
-	private NetworkState ShootAtEnemy() {
-
-		String firePosition = getFirePosition();
-		sendDataToClient(firePosition);
-
-		String clientResponse = readDataFromClient();
-		NetworkState parsedClientResponse = parseResponseOnShoot(clientResponse);
-
-		return parsedClientResponse;
 	}
 
 }

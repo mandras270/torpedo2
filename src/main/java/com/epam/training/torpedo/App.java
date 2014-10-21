@@ -36,10 +36,10 @@ public class App {
 		} else if (gameMode.equals(CLIENT)) {
 
 			Client client = applicationContext.getBean("client", Client.class);
-
 			client.start();
 
 		}
+
 		applicationContext.close();
 
 	}

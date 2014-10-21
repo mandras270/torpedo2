@@ -65,10 +65,8 @@ public class EasyShooter implements Shooter, Loggable {
 	@Override
 	public void registerLastShootHit() {
 
-		// addBottomSibling();
 		addLeftSibling();
 		addRightSibling();
-		// addTopSibling();
 
 	}
 

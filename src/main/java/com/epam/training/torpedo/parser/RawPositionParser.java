@@ -22,8 +22,8 @@ public class RawPositionParser {
 		List<Position> rawList = getRawPositionList(shipPattern);
 
 		for (Position position : rawList) {
-			position.shiftX(-xPadding);
-			position.shiftY(-yPadding);
+			position.shiftX(-yPadding);
+			position.shiftY(-xPadding);
 		}
 
 		return rawList;

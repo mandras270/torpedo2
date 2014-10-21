@@ -1,5 +1,6 @@
 package com.epam.training.torpedo.position;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,25 +30,115 @@ public class RandomPositionGenerator {
 
 	public Map<Position, Ship> getShipsAndPositions(List<Ship> rawShips) {
 
+		resetStillAvailablePositions();
+
 		Map<Position, Ship> shipsAndPositions = new HashMap<>();
 
-		Ship ship1 = rawShips.get(0);
+		for (Ship ship : rawShips) {
 
-		shipsAndPositions.put(new Position(0, 0), ship1);
-		shipsAndPositions.put(new Position(0, 1), ship1);
-		shipsAndPositions.put(new Position(0, 2), ship1);
-		shipsAndPositions.put(new Position(0, 3), ship1);
+			List<Position> rawPositions = ship.getRawPositionsList();
 
-		ship1.setHealth(4);
+			List<Position> shiftedPositions = shiftedPositions(rawPositions);
 
-		Ship ship2 = rawShips.get(1);
-		shipsAndPositions.put(new Position(10, 10), ship2);
-		ship2.setHealth(1);
-
-		Ship ship3 = rawShips.get(3);
-		shipsAndPositions.put(new Position(19, 19), ship3);
-		ship3.setHealth(1);
+			for (Position position : shiftedPositions) {
+				shipsAndPositions.put(position, ship);
+			}
+		}
 
 		return shipsAndPositions;
+	}
+
+	private List<Position> shiftedPositions(List<Position> rawPositions) {
+
+		List<Position> shiftedPositions = new ArrayList<>();
+
+		do {
+
+			int randomPositionNumber = getRandomNumber();
+			Position original = stillAvailablePositions.get(randomPositionNumber);
+			int xShiftValue = original.getX();
+			int yShiftValue = original.getY();
+
+			shiftedPositions.clear();
+
+			for (Position position : rawPositions) {
+
+				Position clonedPosition = new Position(position);
+
+				clonedPosition.shiftX(xShiftValue);
+				clonedPosition.shiftY(yShiftValue);
+
+				shiftedPositions.add(clonedPosition);
+			}
+
+		} while (!checkPositions(shiftedPositions));
+
+		return removePositionsFromAvailable(shiftedPositions);
+	}
+
+	private List<Position> removePositionsFromAvailable(List<Position> positionList) {
+
+		for (Position position : positionList) {
+			stillAvailablePositions.remove(position);
+		}
+		return positionList;
+	}
+
+	private boolean checkPositions(List<Position> shiftedPositions) {
+		validateListIsNotEmptry(shiftedPositions);
+		boolean coordinatesAreNotNegative = checkCoordinatesAreNotNegative(shiftedPositions);
+		boolean coordinatesAreNotInUse = checkCoordinatesAreNotInUse(shiftedPositions);
+		return coordinatesAreNotInUse && coordinatesAreNotNegative;
+	}
+
+	private boolean checkCoordinatesAreNotNegative(List<Position> shiftedPositions) {
+		for (Position position : shiftedPositions) {
+			int x = position.getX();
+			int y = position.getY();
+
+			if (x < 0 || y < 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean checkCoordinatesAreNotInUse(List<Position> shiftedPositions) {
+
+		for (Position position : shiftedPositions) {
+			if (!stillAvailablePositions.contains(position)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private void validateListIsNotEmptry(List<Position> shiftedPositions) {
+		if (shiftedPositions.isEmpty()) {
+			throw new IllegalArgumentException("shiftedPositions was empty!");
+		}
+	}
+
+	private int getRandomNumber() {
+
+		int value = (int) (Math.random() * stillAvailablePositions.size());
+		return value;
+	}
+
+	private void resetStillAvailablePositions() {
+
+		stillAvailablePositions = new ArrayList<>();
+
+		for (int row = 0; row < numberOfRows; row++) {
+			for (int column = 0; column < numberOfColumns; column++) {
+
+				Position pos = new Position();
+				pos.setX(column);
+				pos.setY(row);
+
+				stillAvailablePositions.add(pos);
+			}
+		}
 	}
 }
