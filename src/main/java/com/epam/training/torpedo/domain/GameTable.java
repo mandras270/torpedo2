@@ -94,6 +94,12 @@ public class GameTable implements Loggable {
 
 			sunkShips.add(position);
 
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
 			logger.debug('\n' + this.toString());
 
 			result = shootOnShip(targetShip);

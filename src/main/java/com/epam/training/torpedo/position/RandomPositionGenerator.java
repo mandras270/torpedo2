@@ -40,6 +40,8 @@ public class RandomPositionGenerator {
 
 			List<Position> shiftedPositions = shiftedPositions(rawPositions);
 
+			ship.setHealth(shiftedPositions.size());
+
 			for (Position position : shiftedPositions) {
 				shipsAndPositions.put(position, ship);
 			}

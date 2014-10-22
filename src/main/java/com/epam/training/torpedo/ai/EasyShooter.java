@@ -92,12 +92,10 @@ public class EasyShooter implements Shooter, Loggable {
 
 	@Override
 	public void registerLastShootMissed() {
-		logger.debug("Shoot missed: " + lastPosition);
 	}
 
 	@Override
 	public void registerLastShootSunk() {
-		logger.debug("Enemy ship has sunk: " + lastPosition);
 	}
 
 	private boolean positionIsValid(Position position) {
